@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Feedback Form with Toast Alert</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4, #ffecd2);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #ff9a9e;
+            box-shadow: 0 0 0 2px rgba(255, 154, 158, 0.2);
+        }
+
+        input:hover, textarea:hover, select:hover {
+            border-color: #ff9a9e;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+
+        .rating > input {
+            display: none;
+        }
+
+        .rating > label {
+            position: relative;
+            width: 1em;
+            font-size: 2rem;
+            color: #ffd700;
+            cursor: pointer;
+        }
+
+        .rating > label::before {
+            content: "\2605";
+            position: absolute;
+            opacity: 0;
+        }
+
+        .rating > label:hover:before,
+        .rating > label:hover ~ label:before {
+            opacity: 1 !important;
+        }
+
+        .rating > input:checked ~ label:before {
+            opacity: 1;
+        }
+
+        .rating:hover > input:checked ~ label:before {
+            opacity: 0.4;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #ff9a9e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ff8087;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .toast {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50;
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: top 0.5s ease-in-out;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="toastAlert" class="toast">Thank you for your feedback!</div>
+    <div class="form-container">
+        <h2>Feedback Form</h2>
+        <form id="feedbackForm">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="division">Division:</label>
+                <select id="division" name="division" required>
+                    <option value="">Select Division</option>
+                    <option value="A">Division A</option>
+                    <option value="B">Division B</option>
+                    <option value="C">Division C</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="roll">Roll:</label>
+                <input type="text" id="roll" name="roll" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Rating:</label>
+                <div class="rating">
+                    <input type="radio" id="star5" name="rating" value="5" required><label for="star5">☆</label>
+                    <input type="radio" id="star4" name="rating" value="4"><label for="star4">☆</label>
+                    <input type="radio" id="star3" name="rating" value="3"><label for="star3">☆</label>
+                    <input type="radio" id="star2" name="rating" value="2"><label for="star2">☆</label>
+                    <input type="radio" id="star1" name="rating" value="1"><label for="star1">☆</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="review">Review:</label>
+                <textarea id="review" name="review" placeholder="Please share your thoughts..." required></textarea>
+            </div>
+            <button type="submit">Submit Feedback</button>
+        </form>
+    </div>
+
+    <script>
+       
+            const form = document.getElementById('feedbackForm');
+            const toastAlert = document.getElementById('toastAlert');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); 
+
+               
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+
+                
+                data.rating = document.querySelector('input[name="rating"]:checked')?.value || 'Not selected';
+
+                
+                console.log('Submitted Form Data:', data);
+
+                
+                const message = `Thank you, ${data.name}! Your feedback has been submitted.`;
+
+                
+                toastAlert.textContent = message;
+                toastAlert.classList.add('show');
+
+                
+                form.reset();
+
+              
+                setTimeout(() => {
+                    toastAlert.classList.remove('show');
+                }, 5000);
+            });
+        ;
+    </script>
+</body>
+</html>
+

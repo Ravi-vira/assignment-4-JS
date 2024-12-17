@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vira Ravi - Resume</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2c3e50;
+      --text-color: #333;
+      --background-color: #f4f4f4;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--background-color);
+    }
+
+    .resume {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: #fff;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--primary-color);
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .contact {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .contact a {
+      color: var(--secondary-color);
+      text-decoration: none;
+      font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+
+    .contact a:hover {
+      color: var(--primary-color);
+    }
+
+    section {
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      color: var(--secondary-color);
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      list-style-type: none;
+    }
+
+    li {
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      margin-bottom: 0.5rem;
+    }
+
+    @media (max-width: 600px) {
+      .resume {
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="resume">
+    <header>
+      <h1 id="name">Your Name</h1>
+      <div class="contact">
+        <a href="mailto:jenishpaghadalin018@gmail.com" title="Email">
+          <i class="fas fa-envelope"></i>
+        </a>
+        <a href="tel:+919409209493" title="Phone">
+          <i class="fas fa-phone-alt"></i>
+        </a>
+        <a href="" target="_blank" title="GitHub">
+          <i class="fab fa-github"></i>
+        </a>
+      </div>
+    </header>
+
+    <section class="education">
+      <h2>Education</h2>
+      <ul>
+        <li>
+          <h3 id="Unen">Post Graduation</h3>
+          <p id="Unname">University Name</p>
+        </li>
+        <li>
+          <h3 id="scen">School</h3>
+          <p id="scname">School Name</p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="projects">
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <h3 id="p2">Project Name</h3>
+          <p id="p2d">Project Description.</p>
+        </li>
+      </ul>
+    </section>
+  </div>
+
+  <script>
+    document.getElementById("name").textContent = "Vira ravi";
+    document.getElementById("Unen").textContent = "B.Tech in Information Technology";
+    document.getElementById("Unname").textContent = "Parul University, 2022 - Present";
+    document.getElementById("scen").textContent = "Senior Secondary Education";
+    document.getElementById("scname").textContent = "Vinay Science school";
+    document.getElementById("p2").textContent = "SuitCraft";
+    document.getElementById("p2d").textContent = "Designed a platform to streamline the custom suit creation process from material selection to delivery. Implemented features for fabric browsing, tailor selection, and measurement options. Developed an order workflow that connects customers with tailors and manages delivery logistics";
+  </script>
+</body>
+</html>
