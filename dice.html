@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Dice Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+
+        .game {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .players {
+            display: flex;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .player {
+            flex: 1;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            min-width: 150px;
+        }
+
+        .active {
+            border: 3px solid #4CAF50;
+        }
+
+        .dice {
+            font-size: 4rem;
+            margin: 1rem 0;
+            color: #2196F3;
+        }
+
+        .winner {
+            background: #4CAF50;
+            color: white;
+        }
+
+        button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 1rem;
+        }
+
+        button:hover {
+            background: #1976D2;
+        }
+
+        #message {
+            margin-top: 1rem;
+            font-weight: bold;
+            min-height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game">
+        <h1>Dice Game</h1>
+        <div class="players">
+            <div id="player1" class="player active">
+                <h2>Player 1</h2>
+                <div class="dice">-</div>
+                <div>Score: <span id="score1">0</span></div>
+            </div>
+            <div id="player2" class="player">
+                <h2>Player 2</h2>
+                <div class="dice">-</div>
+                <div>Score: <span id="score2">0</span></div>
+            </div>
+        </div>
+        <div id="message"></div>
+        <button onclick="rollDice()">Roll Dice</button>
+        <button onclick="resetGame()">Reset</button>
+    </div>
+
+    <script>
+        let currentPlayer = 1;
+        let scores = { player1: 0, player2: 0 };
+        let gameOver = false;
+
+        function rollDice() {
+            if (gameOver) return;
+
+            // Roll dice (1-6)
+            const roll = Math.floor(Math.random() * 6) + 1;
+            
+            // Update display and scores
+            const playerDiv = document.getElementById(`player${currentPlayer}`);
+            playerDiv.querySelector('.dice').textContent = roll;
+            scores[`player${currentPlayer}`] = roll;
+
+            
+            if (currentPlayer === 1) {
+                currentPlayer = 2;
+                document.getElementById('player1').classList.remove('active');
+                document.getElementById('player2').classList.add('active');
+            } else {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            gameOver = true;
+            document.getElementById('player2').classList.remove('active');
+
+            
+            const message = document.getElementById('message');
+            if (scores.player1 > scores.player2) {
+                message.textContent = 'Player 1 Wins!';
+                document.getElementById('player1').classList.add('winner');
+            } else if (scores.player2 > scores.player1) {
+                message.textContent = 'Player 2 Wins!';
+                document.getElementById('player2').classList.add('winner');
+            } else {
+                message.textContent = "It's a Tie!";
+            }
+        }
+
+        function resetGame() {
+            
+            currentPlayer = 1;
+            scores = { player1: 0, player2: 0 };
+            gameOver = false;
+
+          
+            document.querySelectorAll('.dice').forEach(dice => dice.textContent = '-');
+            document.getElementById('message').textContent = '';
+            document.querySelectorAll('.player').forEach(player => {
+                player.classList.remove('winner', 'active');
+            });
+            document.getElementById('player1').classList.add('active');
+        }
+    </script>
+</body>
+</html>
