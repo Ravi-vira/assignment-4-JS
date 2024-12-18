@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            padding: 20px;
+        }
+
+        .converter {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            width: 90%;
+            max-width: 400px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            color: white;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: transform 0.2s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            transform: scale(1.02);
+        }
+
+        .swap-btn {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: block;
+            margin: 10px auto;
+            transition: transform 0.3s ease;
+        }
+
+        .swap-btn:hover {
+            transform: rotate(180deg);
+        }
+
+        .convert-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            display: none;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error {
+            background: rgba(255, 99, 71, 0.9) !important;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="converter">
+        <h1>Currency Converter</h1>
+        <div class="input-group">
+            <label for="amount">Amount</label>
+            <input type="number" id="amount" placeholder="Enter amount" min="0" step="0.01">
+        </div>
+        <div class="input-group">
+            <label for="from">From</label>
+            <select id="from">
+                <option value="USD">US Dollar (USD)</option>
+                <option value="EUR">Euro (EUR)</option>
+                <option value="GBP">British Pound (GBP)</option>
+                <option value="INR">Indian Rupee (INR)</option>
+                <option value="THB">Thai Baht (THB)</option>
+                <option value="CNY">Chinese Yuan (CNY)</option>
+                <option value="RUB">Russian Ruble (RUB)</option>
+                <option value="JPY">Japanese Yen (JPY)</option>
+            </select>
+        </div>
+        <button class="swap-btn" onclick="swapCurrencies()">↑↓</button>
+        <div class="input-group">
+            <label for="to">To</label>
+            <select id="to">
+                <option value="EUR">Euro (EUR)</option>
+                <option value="USD">US Dollar (USD)</option>
+                <option value="GBP">British Pound (GBP)</option>
+                <option value="INR">Indian Rupee (INR)</option>
+                <option value="THB">Thai Baht (THB)</option>
+                <option value="CNY">Chinese Yuan (CNY)</option>
+                <option value="RUB">Russian Ruble (RUB)</option>
+                <option value="JPY">Japanese Yen (JPY)</option>
+            </select>
+        </div>
+        <button class="convert-btn" onclick="convertCurrency()">Convert</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Static exchange rates (as of a point in time)
+        const rates = {
+            USD: {
+                EUR: 0.85,
+                GBP: 0.73,
+                INR: 83.12,
+                THB: 35.12,
+                CNY: 7.19,
+                RUB: 91.21,
+                JPY: 110.58,
+                USD: 1
+            },
+            EUR: {
+                USD: 1.18,
+                GBP: 0.86,
+                INR: 97.95,
+                THB: 41.37,
+                CNY: 8.46,
+                RUB: 107.31,
+                JPY: 130.10,
+                EUR: 1
+            },
+            GBP: {
+                USD: 1.37,
+                EUR: 1.16,
+                INR: 113.89,
+                THB: 48.11,
+                CNY: 9.84,
+                RUB: 124.78,
+                JPY: 151.28,
+                GBP: 1
+            },
+            INR: {
+                USD: 0.012,
+                EUR: 0.010,
+                GBP: 0.0088,
+                THB: 0.42,
+                CNY: 0.086,
+                RUB: 1.10,
+                JPY: 1.33,
+                INR: 1
+            },
+            THB: {
+                USD: 0.028,
+                EUR: 0.024,
+                GBP: 0.021,
+                INR: 2.37,
+                CNY: 0.20,
+                RUB: 2.60,
+                JPY: 3.15,
+                THB: 1
+            },
+            CNY: {
+                USD: 0.14,
+                EUR: 0.12,
+                GBP: 0.10,
+                INR: 11.56,
+                THB: 4.88,
+                RUB: 12.69,
+                JPY: 15.38,
+                CNY: 1
+            },
+            RUB: {
+                USD: 0.011,
+                EUR: 0.0093,
+                GBP: 0.0080,
+                INR: 0.91,
+                THB: 0.38,
+                CNY: 0.079,
+                JPY: 1.21,
+                RUB: 1
+            },
+            JPY: {
+                USD: 0.0090,
+                EUR: 0.0077,
+                GBP: 0.0066,
+                INR: 0.75,
+                THB: 0.32,
+                CNY: 0.065,
+                RUB: 0.83,
+                JPY: 1
+            }
+        };
+
+        function convertCurrency() {
+            const amount = parseFloat(document.getElementById('amount').value);
+            const fromCurrency = document.getElementById('from').value;
+            const toCurrency = document.getElementById('to').value;
+            const resultDiv = document.getElementById('result');
+
+            // Input validation
+            if (isNaN(amount) || amount < 0) {
+                showResult('Please enter a valid amount', true);
+                return;
+            }
+
+            // Perform conversion
+            const convertedAmount = amount * rates[fromCurrency][toCurrency];
+            
+            // Format the result
+            const formattedResult = `${amount.toFixed(2)} ${fromCurrency} = ${convertedAmount.toFixed(2)} ${toCurrency}`;
+            showResult(formattedResult, false);
+        }
+
+        function showResult(message, isError) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = message;
+            resultDiv.className = isError ? 'error' : '';
+        }
+
+        function swapCurrencies() {
+            const fromSelect = document.getElementById('from');
+            const toSelect = document.getElementById('to');
+            const temp = fromSelect.value;
+            fromSelect.value = toSelect.value;
+            toSelect.value = temp;
+        }
+
+        // Add keyboard support
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                convertCurrency();
+            }
+        });
+
+        // Add input validation
+        document.getElementById('amount').addEventListener('input', function(e) {
+            if (e.target.value < 0) {
+                e.target.value = 0;
+            }
+        });
+    </script>
+</body>
+</html>
