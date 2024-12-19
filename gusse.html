@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Guessing Game with Celebrations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            overflow: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1),
+                        0 5px 15px rgba(0, 0, 0, 0.05);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            transition: transform 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container.winner {
+            animation: celebrate 0.5s ease infinite;
+            background: linear-gradient(135deg, #fff8e1, #fff);
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .setup-container, .game-container {
+            margin-bottom: 1.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4ecdc4;
+        }
+
+        button {
+            background: #4ecdc4;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+
+        button:hover {
+            background: #45b7b0;
+            transform: scale(1.05);
+        }
+
+        .message {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .error {
+            background: #ffe0e0;
+            color: #d63031;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #28a745;
+        }
+
+        .info {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Fireworks */
+        .firework {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(255, 235, 59, 0.851),
+                        0 0 0 8px rgba(255, 193, 7, 0.851),
+                        0 0 0 12px rgba(255, 152, 0, 0.851);
+            animation: firework-animation 1.5s ease-out infinite;
+        }
+
+        .cartoon {
+            position: absolute;
+            font-size: 4rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .cartoon-left {
+            left: -80px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .cartoon-right {
+            right: -80px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Animations */
+        @keyframes celebrate {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes firework-animation {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(3);
+                opacity: 0;
+            }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(-50%) translateX(0); }
+            50% { transform: translateY(-50%) translateX(10px); }
+            100% { transform: translateY(-50%) translateX(0); }
+        }
+
+        /* Stars */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 1s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="container" id="gameContainer">
+        <h1>Number Guessing Game</h1>
+        
+        <div class="setup-container" id="setupContainer">
+            <input type="number" id="minNumber" placeholder="Enter minimum number" required>
+            <input type="number" id="maxNumber" placeholder="Enter maximum number" required>
+            <button onclick="startGame()">Start Game</button>
+        </div>
+
+        <div class="game-container hidden" id="gamePlay">
+            <input type="number" id="guessInput" placeholder="Enter your guess" required>
+            <button onclick="checkGuess()">Guess!</button>
+            <button onclick="resetGame()">New Game</button>
+            <div id="message" class="message"></div>
+        </div>
+
+        <div class="cartoon cartoon-left hidden" id="cartoonLeft">🏆</div>
+        <div class="cartooAn cartoon-right hidden" id="cartoonRight">🎉</div>
+    </div>
+
+    <script>
+        let minNum, maxNum, targetNumber;
+        const setupContainer = document.getElementById('setupContainer');
+        const gamePlay = document.getElementById('gamePlay');
+        const message = document.getElementById('message');
+        const container = document.getElementById('gameContainer');
+        const cartoonLeft = document.getElementById('cartoonLeft');
+        const cartoonRight = document.getElementById('cartoonRight');
+
+        // Create stars
+        function createStars() {
+            const starsContainer = document.querySelector('.stars');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 1}s`;
+                starsContainer.appendChild(star);
+            }
+        }
+        createStars();
+
+        function startGame() {
+            minNum = parseInt(document.getElementById('minNumber').value);
+            maxNum = parseInt(document.getElementById('maxNumber').value);
+
+            if (isNaN(minNum) || isNaN(maxNum) || minNum >= maxNum) {
+                showMessage('Please enter valid numbers (min should be less than max)', 'error');
+                return;
+            }
+
+            targetNumber = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+            setupContainer.classList.add('hidden');
+            gamePlay.classList.remove('hidden');
+            showMessage(`Guess a number between ${minNum} and ${maxNum}`, 'info');
+            container.classList.remove('winner');
+            hideCartoons();
+        }
+
+        function createFirework() {
+            const firework = document.createElement('div');
+            firework.className = 'firework';
+            firework.style.left = `${Math.random() * 100}%`;
+            firework.style.top = `${Math.random() * 100}%`;
+            document.body.appendChild(firework);
+            
+            setTimeout(() => {
+                document.body.removeChild(firework);
+            }, 1500);
+        }
+
+        function showCartoons() {
+            cartoonLeft.classList.remove('hidden');
+            cartoonRight.classList.remove('hidden');
+        }
+
+        function hideCartoons() {
+            cartoonLeft.classList.add('hidden');
+            cartoonRight.classList.add('hidden');
+        }
+
+        function celebrate() {
+            container.classList.add('winner');
+            showCartoons();
+            
+            // Create multiple fireworks
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    createFirework();
+                }, i * 300);
+            }
+        }
+
+        function checkGuess() {
+            const guess = parseInt(document.getElementById('guessInput').value);
+            
+            if (isNaN(guess) || guess < minNum || guess > maxNum) {
+                showMessage(`Please enter a number between ${minNum} and ${maxNum}`, 'error');
+                return;
+            }
+
+            if (guess === targetNumber) {
+                showMessage('🎉 Congratulations! You got it right! 🎉', 'success');
+                celebrate();
+            } else if (guess > targetNumber) {
+                showMessage('Too high! Try a lower number', 'info');
+            } else {
+                showMessage('Too low! Try a higher number', 'info');
+            }
+        }
+
+        function resetGame() {
+            document.getElementById('minNumber').value = '';
+            document.getElementById('maxNumber').value = '';
+            document.getElementById('guessInput').value = '';
+            setupContainer.classList.remove('hidden');
+            gamePlay.classList.add('hidden');
+            container.classList.remove('winner');
+            hideCartoons();
+            showMessage('', '');
+        }
+
+        function showMessage(text, type) {
+            message.textContent = text;
+            message.className = `message ${type}`;
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('guessInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkGuess();
+            }
+        });
+
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+        });
+    </script>
+</body>
+</html>
+
